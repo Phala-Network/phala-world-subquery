@@ -1,17 +1,30 @@
-type StarterEntity @entity {
-
+type MintedOriginOfShellNft @entity {
   id: ID! #id is a required field
+  owner: String! @index
+  collectionId: Int! @index
+  nftId: Int! @index
+  rarity: String! @index
+  career: String! @index
+  race: String! @index
+  generation: Int! @index
+}
 
-  field1: Int!
+type MintedShellNft @entity {
+  id: ID! #id is a required field
+  owner: String! @index
+  shellCollectionId: Int! @index
+  shellNftId: Int! @index
+  originShellCollectionId: Int
+  originShellNftId: Int
+  rarity: String! @index
+  career: String! @index
+  race: String! @index
+  generation: Int! @index
+}
 
-  field2: String #filed2 is an optional field
-
-  field3: BigInt
-
-  field4: Date
-
-  field5: Boolean
-
-
-
+type StartedIncubationTime @entity {
+  id: ID!
+  collectionId: Int! @index
+  nftId: Int! @index
+  startTime: BigInt!
 }

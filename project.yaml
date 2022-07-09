@@ -8,26 +8,32 @@ runner:
   query:
     name: '@subql/query'
     version: '*'
-description: Phala Network Indexer for SubQuery
+description: Phala World Indexer for SubQuery
 repository: 'https://github.com/Phala-Network/phala-world-subquery.git'
 schema:
   file: ./schema.graphql
 network:
   chainId: '0xd43540ba6d3eb4897c28a77d48cb5b729fea37603cbbfc7a86a73b72adb3be8d'
   endpoint: 'wss://khala.api.onfinality.io/public-ws'
-  dictionary: 'https://api.subquery.network/sq/subquery/polkadot-dictionary'
+  dictionary: 'https://api.subquery.network/sq/subquery/khala-dictionary'
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1
+    startBlock: 1938472
     mapping:
       file: ./dist/index.js
       handlers:
-        - handler: handleBlock
-          kind: substrate/BlockHandler
-        - handler: handleEvent
+        - handler: handleMintedOriginOfShell
           kind: substrate/EventHandler
           filter:
-            module: balances
-            method: Deposit
-        - handler: handleCall
-          kind: substrate/CallHandler
+            module: PWNftSale
+            method: OriginOfShellMinted
+        - handler: handleStartedIncubation
+          kind: substrate/EventHandler
+          filter:
+            module: PWIncubation
+            method: StartedIncubation
+        - handler: handleMintedShell
+          kind: substrate/EventHandler
+            filter:
+            module: PWIncubation
+            method: ShellAwakened

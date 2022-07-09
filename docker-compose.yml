@@ -4,17 +4,20 @@ services:
   postgres:
     image: postgres:12-alpine
     ports:
-      - 5432:5432
+      - "8816:8816"
+    expose:
+      - "8816"
+    command:
+      - -p 8816
     volumes:
       - .data/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      test: ["CMD", "ls"]
+      interval: 3s
       timeout: 5s
-      retries: 5
-
+      retries: 10
   subquery-node:
     image: onfinality/subql-node:latest
     depends_on:
@@ -26,14 +29,14 @@ services:
       DB_PASS: postgres
       DB_DATABASE: postgres
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 8816
     volumes:
       - ./:/app
     command:
       - -f=/app
       - --db-schema=app
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
+      test: ["CMD", "ls"]
       interval: 3s
       timeout: 5s
       retries: 10
@@ -42,18 +45,13 @@ services:
     image: onfinality/subql-query:latest
     ports:
       - 3000:3000
-    depends_on:
-      "postgres":
-        condition: service_healthy
-      "subquery-node":
-        condition: service_healthy
     restart: always
     environment:
       DB_USER: postgres
       DB_PASS: postgres
       DB_DATABASE: postgres
       DB_HOST: postgres
-      DB_PORT: 5432
+      DB_PORT: 8816
     command:
       - --name=app
       - --playground
