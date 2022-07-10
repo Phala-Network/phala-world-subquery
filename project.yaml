@@ -34,6 +34,6 @@ dataSources:
             method: StartedIncubation
         - handler: handleMintedShell
           kind: substrate/EventHandler
-            filter:
+          filter:
             module: PWIncubation
             method: ShellAwakened
