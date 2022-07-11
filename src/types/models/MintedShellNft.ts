@@ -16,6 +16,8 @@ export class MintedShellNft implements Entity {
 
     public id: string;
 
+    public createdAt: Date;
+
     public owner: string;
 
     public shellCollectionId: number;

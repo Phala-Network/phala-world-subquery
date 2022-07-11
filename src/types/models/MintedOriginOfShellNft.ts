@@ -16,6 +16,8 @@ export class MintedOriginOfShellNft implements Entity {
 
     public id: string;
 
+    public createdAt: Date;
+
     public owner: string;
 
     public collectionId: number;

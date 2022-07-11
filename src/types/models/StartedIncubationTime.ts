@@ -20,7 +20,11 @@ export class StartedIncubationTime implements Entity {
 
     public nftId: number;
 
+    public owner: string;
+
     public startTime: bigint;
+
+    public hatchTime: bigint;
 
 
     async save(): Promise<void>{

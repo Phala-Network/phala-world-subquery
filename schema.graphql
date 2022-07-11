@@ -1,5 +1,6 @@
 type MintedOriginOfShellNft @entity {
   id: ID! #id is a required field
+  createdAt: Date!
   owner: String! @index
   collectionId: Int! @index
   nftId: Int! @index
@@ -11,6 +12,7 @@ type MintedOriginOfShellNft @entity {
 
 type MintedShellNft @entity {
   id: ID! #id is a required field
+  createdAt: Date!
   owner: String! @index
   shellCollectionId: Int! @index
   shellNftId: Int! @index
@@ -26,5 +28,34 @@ type StartedIncubationTime @entity {
   id: ID!
   collectionId: Int! @index
   nftId: Int! @index
+  owner: String!
   startTime: BigInt!
+  hatchTime: BigInt!
+}
+
+type NftListed @entity {
+  id: ID!
+  createdAt: Date!
+  owner: String! @index
+  collectionId: Int! @index
+  nftId: Int! @index
+  amount: BigInt
+}
+
+type NftUnlisted @entity {
+  id: ID!
+  createdAt: Date!
+  owner: String! @index
+  collectionId: Int! @index
+  nftId: Int! @index
+}
+
+type NftSold @entity {
+  id: ID!
+  createdAt: Date!
+  sender: String! @index
+  buyer: String! @index
+  collectionId: Int! @index
+  nftId: Int! @index
+  price: BigInt! @index
 }

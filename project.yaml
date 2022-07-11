@@ -37,3 +37,18 @@ dataSources:
           filter:
             module: PWIncubation
             method: ShellAwakened
+        - handler: handleNftListed
+          kind: substrate/EventHandler
+          filter:
+            module: RmrkMarket
+            method: TokenListed
+        - handler: handleNftUnlisted
+          kind: substrate/EventHandler
+          filter:
+            module: RmrkMarket
+            method: TokenUnlisted
+        - handler: handleNftSold
+          kind: substrate/EventHandler
+          filter:
+            module: RmrkMarket
+            method: TokenSold
