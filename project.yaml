@@ -18,7 +18,7 @@ network:
   dictionary: 'https://api.subquery.network/sq/subquery/khala-dictionary'
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1938472
+    startBlock: 1801240
     mapping:
       file: ./dist/index.js
       handlers:
