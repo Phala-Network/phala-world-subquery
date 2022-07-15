@@ -11,7 +11,7 @@
     "start:docker": "docker-compose pull && docker-compose up"
   },
   "homepage": "https://github.com/Phala-Network/phala-world-subquery",
-  "repository": "github:Phala-Network/phala-world-subquery",
+  "repository": "https://github.com/Phala-Network/phala-world-subquery",
   "files": [
     "dist",
     "schema.graphql",

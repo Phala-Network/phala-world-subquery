@@ -1,0 +1,54 @@
+specVersion: 1.0.0
+name: phala-world-subquery
+version: 0.0.1
+runner:
+  node:
+    name: '@subql/node'
+    version: '>=1.0.0'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: Phala World Indexer for SubQuery
+repository: 'https://github.com/Phala-Network/phala-world-subquery.git'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0xfd51887ace0c90c8f54b0d583cf6016090e5c8b183638a6cf4a24b9589c94d88'
+  endpoint: 'ws://host.docker.internal:9944'
+  dictionary: 'https://api.subquery.network/sq/subquery/khala-dictionary'
+dataSources:
+  - kind: substrate/Runtime
+    startBlock: 1
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleMintedOriginOfShell
+          kind: substrate/EventHandler
+          filter:
+            module: PWNftSale
+            method: OriginOfShellMinted
+        - handler: handleStartedIncubation
+          kind: substrate/EventHandler
+          filter:
+            module: PWIncubation
+            method: StartedIncubation
+        - handler: handleMintedShell
+          kind: substrate/EventHandler
+          filter:
+            module: PWIncubation
+            method: ShellAwakened
+        - handler: handleNftListed
+          kind: substrate/EventHandler
+          filter:
+            module: RmrkMarket
+            method: TokenListed
+        - handler: handleNftUnlisted
+          kind: substrate/EventHandler
+          filter:
+            module: RmrkMarket
+            method: TokenUnlisted
+        - handler: handleNftSold
+          kind: substrate/EventHandler
+          filter:
+            module: RmrkMarket
+            method: TokenSold
