@@ -33,7 +33,15 @@ type StartedIncubationTime @entity {
   hatchTime: BigInt!
 }
 
-type NftListed @entity {
+type FedOriginOfShell @entity {
+  id: ID!
+  createdAt: Date!
+  collectionId: Int! @index
+  nftId: Int! @index
+  sender: String! @index
+}
+
+type ListedNft @entity {
   id: ID!
   createdAt: Date!
   owner: String! @index
@@ -42,7 +50,7 @@ type NftListed @entity {
   amount: BigInt
 }
 
-type NftUnlisted @entity {
+type UnlistedNft @entity {
   id: ID!
   createdAt: Date!
   owner: String! @index
@@ -50,7 +58,7 @@ type NftUnlisted @entity {
   nftId: Int! @index
 }
 
-type NftSold @entity {
+type SoldNft @entity {
   id: ID!
   createdAt: Date!
   sender: String! @index

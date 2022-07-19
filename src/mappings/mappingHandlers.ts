@@ -1,5 +1,5 @@
 import {SubstrateEvent} from "@subql/types";
-import {MintedOriginOfShellNft, StartedIncubationTime, MintedShellNft, NftListed, NftSold, NftUnlisted} from "../types";
+import {MintedOriginOfShellNft, StartedIncubationTime, FedOriginOfShell, MintedShellNft, ListedNft, SoldNft, UnlistedNft} from "../types";
 
 
 export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<void> {
@@ -39,6 +39,22 @@ export async function handleStartedIncubation(event: SubstrateEvent): Promise<vo
     logger.debug(`Add new StartedIncubationTime record: ${record}`)
 }
 
+export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<void> {
+    const {event: {data: [collectionId, nftId, sender]}} = event;
+    //Retrieve the record by its ID
+    let id = `${collectionId}-${nftId}`
+    let record = await FedOriginOfShell.get(id)
+    if (record === undefined) {
+        record = new FedOriginOfShell(id)
+        record.createdAt = event.block.timestamp
+        record.sender = sender.toString()
+        record.collectionId = collectionId as unknown as number
+        record.nftId = nftId as unknown as number
+    }
+    await record.save();
+    logger.debug(`Add new StartedIncubationTime record: ${record}`)
+}
+
 export async function handleMintedShell(event: SubstrateEvent): Promise<void> {
     const {event: {data: [shellCollectionId, shellNftId, rarity, career, race, generationId, originOfShellCollectionId, originOfShellNftId, owner]}} = event;
     //Retrieve the record by its ID
@@ -61,13 +77,13 @@ export async function handleMintedShell(event: SubstrateEvent): Promise<void> {
     logger.debug(`Add new MintedShellNft record: ${record}`)
 }
 
-export async function handleNftListed(event: SubstrateEvent): Promise<void> {
+export async function handleListedNft(event: SubstrateEvent): Promise<void> {
     const {event: {data: [owner, collectionId, nftId, amount]}} = event;
     //Retrieve the record by its ID
     let id = `${collectionId}-${nftId}`
-    let record = await NftListed.get(id)
+    let record = await ListedNft.get(id)
     if (record === undefined) {
-        record = new NftListed(id)
+        record = new ListedNft(id)
         record.createdAt = event.block.timestamp
         record.owner = owner.toString()
         record.collectionId = collectionId as unknown as number
@@ -78,13 +94,13 @@ export async function handleNftListed(event: SubstrateEvent): Promise<void> {
     logger.debug(`Add new NftListed record: ${record}`)
 }
 
-export async function handleNftUnlisted(event: SubstrateEvent): Promise<void> {
+export async function handleUnlistedNft(event: SubstrateEvent): Promise<void> {
     const {event: {data: [owner, collectionId, nftId]}} = event;
     //Retrieve the record by its ID
     let id = `${collectionId}-${nftId}`
-    let record = await NftUnlisted.get(id)
+    let record = await UnlistedNft.get(id)
     if (record === undefined) {
-        record = new NftUnlisted(id)
+        record = new UnlistedNft(id)
         record.createdAt = event.block.timestamp
         record.owner = owner.toString()
         record.collectionId = collectionId as unknown as number
@@ -94,13 +110,13 @@ export async function handleNftUnlisted(event: SubstrateEvent): Promise<void> {
     logger.debug(`Add new NftUnlisted record: ${record}`)
 }
 
-export async function handleNftSold(event: SubstrateEvent): Promise<void> {
+export async function handleSoldNft(event: SubstrateEvent): Promise<void> {
     const {event: {data: [sender, buyer, collectionId, nftId, price]}} = event;
     //Retrieve the record by its ID
     let id = `${collectionId}-${nftId}`
-    let record = await NftSold.get(id)
+    let record = await SoldNft.get(id)
     if (record === undefined) {
-        record = new NftSold(id)
+        record = new SoldNft(id)
         record.createdAt = event.block.timestamp
         record.sender = sender.toString()
         record.buyer = buyer.toString()

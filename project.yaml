@@ -25,30 +25,35 @@ dataSources:
         - handler: handleMintedOriginOfShell
           kind: substrate/EventHandler
           filter:
-            module: PWNftSale
+            module: pwNftSale
             method: OriginOfShellMinted
         - handler: handleStartedIncubation
           kind: substrate/EventHandler
           filter:
-            module: PWIncubation
+            module: pwIncubation
             method: StartedIncubation
         - handler: handleMintedShell
           kind: substrate/EventHandler
           filter:
-            module: PWIncubation
+            module: pwIncubation
             method: ShellAwakened
+        - handler: handleFedOriginOfShell
+          kind: substrate/EventHandler
+          filter:
+            module: pwIncubation
+            method: OriginOfShellReceivedFood
         - handler: handleNftListed
           kind: substrate/EventHandler
           filter:
-            module: RmrkMarket
+            module: rmrkMarket
             method: TokenListed
-        - handler: handleNftUnlisted
+        - handler: handleUnlistedNft
           kind: substrate/EventHandler
           filter:
-            module: RmrkMarket
+            module: rmrkMarket
             method: TokenUnlisted
-        - handler: handleNftSold
+        - handler: handleSoldNft
           kind: substrate/EventHandler
           filter:
-            module: RmrkMarket
+            module: rmrkMarket
             method: TokenSold

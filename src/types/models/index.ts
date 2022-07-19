@@ -8,9 +8,11 @@ export {MintedShellNft} from "./MintedShellNft"
 
 export {StartedIncubationTime} from "./StartedIncubationTime"
 
-export {NftListed} from "./NftListed"
+export {FedOriginOfShell} from "./FedOriginOfShell"
 
-export {NftUnlisted} from "./NftUnlisted"
+export {ListedNft} from "./ListedNft"
 
-export {NftSold} from "./NftSold"
+export {UnlistedNft} from "./UnlistedNft"
+
+export {SoldNft} from "./SoldNft"
 
