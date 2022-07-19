@@ -6,6 +6,8 @@ export {MintedOriginOfShellNft} from "./MintedOriginOfShellNft"
 
 export {MintedShellNft} from "./MintedShellNft"
 
+export {OriginOfShellPreorder} from "./OriginOfShellPreorder"
+
 export {StartedIncubationTime} from "./StartedIncubationTime"
 
 export {FedOriginOfShell} from "./FedOriginOfShell"

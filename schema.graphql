@@ -24,6 +24,13 @@ type MintedShellNft @entity {
   generation: Int! @index
 }
 
+type OriginOfShellPreorder @entity {
+  id: ID!
+  createdAt: Date!
+  owner: String! @index
+  preorderId: Int! @index
+}
+
 type StartedIncubationTime @entity {
   id: ID!
   collectionId: Int! @index

@@ -22,6 +22,11 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
+        - handler: handleOriginOfShellPreorder
+          kind: substrate/EventHandler
+          filter:
+            module: pwNftSale
+            method: OriginOfShellPreordered
         - handler: handleMintedOriginOfShell
           kind: substrate/EventHandler
           filter:
