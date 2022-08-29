@@ -1,5 +1,15 @@
 import {SubstrateEvent} from "@subql/types";
-import {MintedOriginOfShellNft, StartedIncubationTime, FedOriginOfShell, MintedShellNft, ListedNft, SoldNft, UnlistedNft, OriginOfShellPreorder} from "../types";
+import {
+    MintedOriginOfShellNft,
+    StartedIncubationTime,
+    FedOriginOfShell,
+    MintedShellNft,
+    ListedNft,
+    SoldNft,
+    UnlistedNft,
+    OriginOfShellPreorder,
+    PreorderStatus,
+} from "../types";
 
 export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<void> {
     const {event: {data: [rarityType, collectionId, nftId, owner, race, career, generationId]}} = event;
@@ -39,7 +49,7 @@ export async function handleStartedIncubation(event: SubstrateEvent): Promise<vo
 }
 
 export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<void> {
-    const {event: {data: [collectionId, nftId, sender]}} = event;
+    const {event: {data: [collectionId, nftId, sender, era]}} = event;
     //Retrieve the record by its ID
     let id = `${collectionId}-${nftId}`
     let record = await FedOriginOfShell.get(id)
@@ -49,6 +59,7 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
         record.sender = sender.toString()
         record.collectionId = collectionId as unknown as number
         record.nftId = nftId as unknown as number
+        record.era = era as unknown as number
     }
     await record.save();
     logger.debug(`Add new StartedIncubationTime record: ${record}`)
@@ -86,9 +97,33 @@ export async function handleOriginOfShellPreorder(event: SubstrateEvent): Promis
         record.createdAt = event.block.timestamp
         record.owner = owner.toString()
         record.preorderId = preorderId as unknown as number
+        record.status = PreorderStatus.PENDING
     }
     await record.save();
     logger.debug(`Add new OriginOfShellPreorder record: ${record}`)
+}
+
+export async function handleChosenPreorderMinted(event: SubstrateEvent): Promise<void> {
+    const {event: {data: [preorderId, owner, nftId]}} = event;
+    let id = `${preorderId}-${owner}`
+    let record = await OriginOfShellPreorder.get(id)
+    if (record !== undefined) {
+        record.status = PreorderStatus.CHOSEN
+        record.nftId = nftId as unknown as number
+        await record.save();
+        logger.debug(`Update OriginOfShellPreorder record: ${record}`)
+    }
+}
+
+export async function handleNotChosenPreorderRefunded(event: SubstrateEvent): Promise<void> {
+    const {event: {data: [preorderId, owner]}} = event;
+    let id = `${preorderId}-${owner}`
+    let record = await OriginOfShellPreorder.get(id)
+    if (record !== undefined) {
+        record.status = PreorderStatus.REFUNDED
+        await record.save();
+        logger.debug(`Update OriginOfShellPreorder record: ${record}`)
+    }
 }
 
 export async function handleListedNft(event: SubstrateEvent): Promise<void> {
