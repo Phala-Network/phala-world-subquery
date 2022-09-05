@@ -54,7 +54,7 @@ type FedOriginOfShell @entity {
   collectionId: Int! @index
   nftId: Int! @index
   sender: String! @index
-  era: Int! @index
+  era: Int @index
 }
 
 type ListedNft @entity {
