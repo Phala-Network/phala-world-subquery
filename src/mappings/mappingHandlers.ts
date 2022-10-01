@@ -88,7 +88,7 @@ export async function handleMintedShell(event: SubstrateEvent): Promise<void> {
 }
 
 export async function handleOriginOfShellPreorder(event: SubstrateEvent): Promise<void> {
-    const {event: {data: [owner, preorderId]}} = event;
+    const {event: {data: [owner, preorderId, race, career]}} = event;
     //Retrieve the record by its ID
     let id = `${preorderId}-${owner}`
     let record = await OriginOfShellPreorder.get(id)
@@ -96,6 +96,8 @@ export async function handleOriginOfShellPreorder(event: SubstrateEvent): Promis
         record = new OriginOfShellPreorder(id)
         record.createdAt = event.block.timestamp
         record.owner = owner.toString()
+        record.race = race.toString()
+        record.career = career.toString()
         record.preorderId = preorderId as unknown as number
         record.status = PreorderStatus.PENDING
     }

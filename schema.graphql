@@ -37,6 +37,8 @@ type OriginOfShellPreorder @entity {
   preorderId: Int! @index
   nftId: Int @index
   status: PreorderStatus!
+  race: String! @index
+  career: String! @index
 }
 
 type StartedIncubationTime @entity {
