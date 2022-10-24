@@ -32,6 +32,16 @@ dataSources:
           filter:
             module: pwNftSale
             method: OriginOfShellMinted
+        - handler: handleChosenPreorderMinted
+          kind: substrate/EventHandler
+          filter:
+            module: pwNftSale
+            method: ChosenPreorderMinted
+        - handler: handleNotChosenPreorderRefunded
+          kind: substrate/EventHandler
+          filter:
+            module: pwNftSale
+            method: NotChosenPreorderRefunded
         - handler: handleStartedIncubation
           kind: substrate/EventHandler
           filter:

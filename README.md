@@ -1,8 +1,6 @@
-# SubQuery - Starter Package
+# SubQuery for PhalaWorld
 
-
-The Starter Package is an example that you can use as a starting point for developing your SubQuery project.
-A SubQuery package defines which data The SubQuery will index from the Substrate blockchain, and how it will store it. 
+This is SubQuery project for PhalaWorld indexing.
 
 ## Preparation
 
@@ -11,34 +9,96 @@ A SubQuery package defines which data The SubQuery will index from the Substrate
 - [Typescript](https://www.typescriptlang.org/) are required to compile project and define types.  
 
 - Both SubQuery CLI and generated Project have dependencies and require [Node](https://nodejs.org/en/).
-     
 
-#### Install the SubQuery CLI
+- [Postgres](https://www.postgresql.org/) as Database.
 
-Install SubQuery CLI globally on your terminal by using NPM:
+#### Installation
 
-```
-npm install -g @subql/cli
-```
+We need create an user and database for SubQuery:
 
-Run help to see available commands and usage provide by CLI
-```
-subql help
+``` bash
+sudo -u postgres createuser subquery --interactive --pwprompt
+sudo -u postgres createdb subquery -O subquery
 ```
 
-## Initialize the starter package
+Install dependencies:
 
-Inside the directory in which you want to create the SubQuery project, simply replace `project-name` with your project name and run the command:
-```
-subql init --starter project-name
-```
-Then you should see a folder with your project name has been created inside the directory, you can use this as the start point of your project. And the files should be identical as in the [Directory Structure](https://doc.subquery.network/directory_structure.html).
-
-Last, under the project directory, run following command to install all the dependency.
-```
-yarn install
+``` bash
+npm install
+# OR yarn
+yarn
 ```
 
+For testnet, we don't use default `project.yaml`, we create a copy `project_testing.yaml` with some modification:
+
+1. Set up correlative `chainId` and `endpoint`. You can found `chainId` with [Polkadot/Substrate Portal](https://polkadot.js.org/apps/) by navigate to Settings -> Metadata, the Genesis Hash is what we need.
+2. Change `startBlock` to recent block number when your first time start indexing.
+
+Before we run this project first time, we need ensure everything is up-to-date:
+
+```bash
+npm run codegen && npm run prepack
+```
+
+Then we can test our setup with:
+
+```bash
+DB_PASS=<YOUR_PASSOWRD> DB_PORT=5432 DB_HOST=127.0.0.1 DB_USER=subquery DB_DATABASE=subquery node_modules/.bin/subql-node -f project_testing.yaml --db-schema public --port 3000
+```
+
+The indexer will start to works.
+
+We need start query service as HTTP endpoint:
+
+```
+node_modules/.bin/subql-query --indexer=http://127.0.0.1:3000 --name public --port 3001
+```
+
+#### Daemonization
+
+We use Supervisor for process control in testing server. Here is snippet for memo purpose:
+
+```
+[program:subql-node]
+directory=<path_to_subquery_project>
+command=/usr/bin/node node_modules/.bin/subql-node -f project_testing.yaml --db-schema public --port 3002
+autorestart=true
+redirect_stderr=true
+killasgroup=true
+stopasgroup=true
+stdout_logfile=/var/log/supervisor/%(program_name)s.log
+stdout_logfile_maxbytes=0
+logfile_maxbytes=0
+environment=
+  DB_PASS="<YOUR_PASSOWRD>",
+  DB_PORT="5432",
+  DB_HOST="127.0.0.1",
+  DB_USER="subquery",
+  DB_DATABASE="subquery"
+
+[program:subql-query]
+directory=<path_to_subquery_project>
+command=/usr/bin/node node_modules/.bin/subql-query --indexer=http://127.0.0.1:3002 --name public --port 3003
+autorestart=true
+redirect_stderr=true
+killasgroup=true
+stopasgroup=true
+stdout_logfile=/var/log/supervisor/%(program_name)s.log
+stdout_logfile_maxbytes=0
+logfile_maxbytes=0
+environment=
+  DB_PASS="<YOUR_PASSOWRD>",
+  DB_PORT="5432",
+  DB_HOST="127.0.0.1",
+  DB_USER="subquery",
+  DB_DATABASE="subquery"
+```
+
+Save snippet above with path `/etc/supervisor/conf.d/subquery.conf`. You need reload Supervisor's configuration:
+
+```
+sudo supervisorctl reread && sudo supervisorctl update
+```
 
 ## Configure your project
 
@@ -68,35 +128,3 @@ Run pack command from root directory of your project will automatically generate
 ```
 yarn build
 ```
-
-## Indexing and Query
-
-#### Run required systems in docker
-
-
-Under the project directory run following command:
-
-```
-docker-compose pull && docker-compose up
-```
-#### Query the project
-
-Open your browser and head to `http://localhost:3000`.
-
-Finally, you should see a GraphQL playground is showing in the explorer and the schemas that ready to query.
-
-For the `subql-starter` project, you can try to query with the following code to get a taste of how it works.
-
-````graphql
-{
-  query{
-    starterEntities(first:10){
-      nodes{
-        field1,
-        field2,
-        field3
-      }
-    }
-  }
-}
-````
