@@ -18,7 +18,7 @@ network:
   dictionary: 'https://api.subquery.network/sq/subquery/khala-dictionary'
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 1801240
+    startBlock: 2603936
     mapping:
       file: ./dist/index.js
       handlers:
@@ -72,3 +72,9 @@ dataSources:
           filter:
             module: rmrkMarket
             method: TokenSold
+        - handler: handleIdentitySet
+          kind: substrate/CallHandler
+          filter:
+            module: identity
+            method: setIdentity
+            success: true

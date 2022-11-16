@@ -1,4 +1,4 @@
-import {SubstrateEvent} from "@subql/types";
+import type {SubstrateEvent, SubstrateExtrinsic} from "@subql/types";
 import {
     MintedOriginOfShellNft,
     StartedIncubationTime,
@@ -9,6 +9,7 @@ import {
     UnlistedNft,
     OriginOfShellPreorder,
     PreorderStatus,
+    Identity,
 } from "../types";
 
 export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<void> {
@@ -177,4 +178,18 @@ export async function handleSoldNft(event: SubstrateEvent): Promise<void> {
     }
     await record.save();
     logger.debug(`Add new NftSold record: ${record}`)
+}
+
+export async function handleIdentitySet(extrinsic: SubstrateExtrinsic): Promise<void> {
+    const signer = extrinsic.extrinsic.signer.toString();
+    const args = JSON.parse(extrinsic.extrinsic.args.toString());
+    let record = await Identity.get(signer)
+    if (record === undefined) {
+        record = new Identity(signer)
+    }
+    const displayName = args?.display?.raw || ''
+    if (displayName) {
+        record.displayName = decodeURIComponent(displayName.slice(2).replace(/[0-9a-f]{2}/g, '%$&'))
+        await record.save()
+    }
 }

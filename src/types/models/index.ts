@@ -18,3 +18,5 @@ export {UnlistedNft} from "./UnlistedNft"
 
 export {SoldNft} from "./SoldNft"
 
+export {Identity} from "./Identity"
+

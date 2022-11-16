@@ -85,3 +85,8 @@ type SoldNft @entity {
   nftId: Int! @index
   price: BigInt! @index
 }
+
+type Identity @entity {
+  id: ID!
+  displayName: String
+}
