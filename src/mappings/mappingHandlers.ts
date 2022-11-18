@@ -52,7 +52,7 @@ export async function handleStartedIncubation(event: SubstrateEvent): Promise<vo
 export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<void> {
     const {event: {data: [collectionId, nftId, sender, era]}} = event;
     //Retrieve the record by its ID
-    let id = `${collectionId}-${nftId}`
+    let id = `${collectionId}-${nftId}-${era}`
     let record = await FedOriginOfShell.get(id)
     if (record === undefined) {
         record = new FedOriginOfShell(id)
