@@ -51,19 +51,20 @@ export async function handleStartedIncubation(event: SubstrateEvent): Promise<vo
 
 export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<void> {
     const {event: {data: [collectionId, nftId, sender, era]}} = event;
-    //Retrieve the record by its ID
-    let id = `${collectionId}-${nftId}-${era}`
-    let record = await FedOriginOfShell.get(id)
-    if (record === undefined) {
-        record = new FedOriginOfShell(id)
+    let nft = await MintedOriginOfShellNft.get(`${collectionId}-${nftId}`)
+    if (nft !== undefined) {
+        let id = `${collectionId}-${nftId}-${era}-${+(event.block.timestamp)}`
+        let record = new FedOriginOfShell(id)
+        record.receiver = nft.owner
+        record.shellId = `${collectionId}-${nftId}`
         record.createdAt = event.block.timestamp
         record.sender = sender.toString()
         record.collectionId = collectionId as unknown as number
         record.nftId = nftId as unknown as number
         record.era = era as unknown as number
+        await record.save();
+        logger.debug(`Add new StartedIncubationTime record: ${record}`)
     }
-    await record.save();
-    logger.debug(`Add new StartedIncubationTime record: ${record}`)
 }
 
 export async function handleMintedShell(event: SubstrateEvent): Promise<void> {

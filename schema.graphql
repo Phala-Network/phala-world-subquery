@@ -8,6 +8,7 @@ type MintedOriginOfShellNft @entity {
   career: String! @index
   race: String! @index
   generation: Int! @index
+  feds: [FedOriginOfShell!]! @derivedFrom(field: "shell")
 }
 
 type MintedShellNft @entity {
@@ -56,7 +57,9 @@ type FedOriginOfShell @entity {
   collectionId: Int! @index
   nftId: Int! @index
   sender: String! @index
+  receiver: String! @index
   era: Int @index
+  shell: MintedOriginOfShellNft!
 }
 
 type ListedNft @entity {
