@@ -1,7 +1,6 @@
 type Identity @entity {
   id: ID!
   displayName: String
-  originShells: [MintedOriginOfShellNft!]! @derivedFrom(field: "identity")
   shells: [MintedShellNft!] @derivedFrom(field: "identity")
 }
 
@@ -16,8 +15,8 @@ type MintedOriginOfShellNft @entity {
   race: String! @index
   generation: Int! @index
   feds: [FedOriginOfShell!]! @derivedFrom(field: "shell")
-  identity: Identity
   shell: MintedShellNft
+  identity: Identity
 }
 
 type MintedShellNft @entity {
@@ -33,7 +32,6 @@ type MintedShellNft @entity {
   race: String! @index
   generation: Int! @index
   identity: Identity
-  origin: MintedOriginOfShellNft
 }
 
 enum PreorderStatus {
