@@ -1,3 +1,10 @@
+type Identity @entity {
+  id: ID!
+  displayName: String
+  originShells: [MintedOriginOfShellNft!]! @derivedFrom(field: "identity")
+  shells: [MintedShellNft!] @derivedFrom(field: "identity")
+}
+
 type MintedOriginOfShellNft @entity {
   id: ID! #id is a required field
   createdAt: Date!
@@ -9,6 +16,8 @@ type MintedOriginOfShellNft @entity {
   race: String! @index
   generation: Int! @index
   feds: [FedOriginOfShell!]! @derivedFrom(field: "shell")
+  identity: Identity
+  shell: MintedShellNft
 }
 
 type MintedShellNft @entity {
@@ -23,6 +32,8 @@ type MintedShellNft @entity {
   career: String! @index
   race: String! @index
   generation: Int! @index
+  identity: Identity
+  origin: MintedOriginOfShellNft
 }
 
 enum PreorderStatus {
@@ -87,9 +98,4 @@ type SoldNft @entity {
   collectionId: Int! @index
   nftId: Int! @index
   price: BigInt! @index
-}
-
-type Identity @entity {
-  id: ID!
-  displayName: String
 }

@@ -21,6 +21,7 @@ export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<
         record = new MintedOriginOfShellNft(id)
         record.createdAt = event.block.timestamp
         record.owner = owner.toString()
+        record.identityId = owner.toString()
         record.collectionId = collectionId as unknown as number
         record.nftId = nftId as unknown as number
         record.rarity = rarityType.toHuman().toString()
@@ -72,10 +73,14 @@ export async function handleMintedShell(event: SubstrateEvent): Promise<void> {
     //Retrieve the record by its ID
     let id = `${shellCollectionId}-${shellNftId}`
     let record = await MintedShellNft.get(id)
+    let origin_id = `${originOfShellCollectionId}-${originOfShellNftId}}`
+    const origin = await MintedOriginOfShellNft.get(origin_id)
     if (record === undefined) {
         record = new MintedShellNft(id)
         record.createdAt = event.block.timestamp
         record.owner = owner.toString()
+        record.identityId = owner.toString()
+        record.originId = origin_id
         record.shellCollectionId = shellCollectionId as unknown as number
         record.shellNftId = shellNftId as unknown as number
         record.rarity = rarity.toHuman().toString()
@@ -84,8 +89,12 @@ export async function handleMintedShell(event: SubstrateEvent): Promise<void> {
         record.generation = generationId as unknown as number
         record.originShellCollectionId = originOfShellCollectionId as unknown as number
         record.originShellNftId = originOfShellNftId as unknown as number
+        await record.save();
+        if (origin) {
+            origin.shellId = id
+            await origin.save()
+        }
     }
-    await record.save();
     logger.debug(`Add new MintedShellNft record: ${record}`)
 }
 
