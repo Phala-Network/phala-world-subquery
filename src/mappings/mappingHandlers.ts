@@ -10,6 +10,7 @@ import {
     OriginOfShellPreorder,
     PreorderStatus,
     Identity,
+    EarnedEnergyPoint,
 } from "../types";
 
 export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<void> {
@@ -69,7 +70,48 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
         record.nftId = nftId as unknown as number
         record.era = era as unknown as number
         await record.save();
-        logger.debug(`Add new StartedIncubationTime record: ${record}`)
+        logger.debug(`Add new FedOriginOfShell record: ${record}`)
+
+        if (nft.owner.toString() === sender.toString()) {
+            let receiver = await Identity.get(nft.owner.toString())
+            if (!receiver) {
+                receiver = new Identity(nft.owner.toString())
+                await receiver.save()
+            }
+            const ball = new EarnedEnergyPoint(`${event.block.timestamp}-${sender.toString()}`)
+            ball.identityId = receiver.id
+            ball.fedId = record.id
+            ball.points = 3
+            ball.era = era as unknown as number
+            ball.createdAt = event.block.timestamp
+            await ball.save()
+        } else {
+            let receiver = await Identity.get(nft.owner.toString())
+            if (!receiver) {
+                receiver = new Identity(nft.owner.toString())
+                await receiver.save()
+            }
+            const ball1 = new EarnedEnergyPoint(`${event.block.timestamp}-${nft.owner.toString()}`)
+            ball1.identityId = receiver.id
+            ball1.fedId = record.id
+            ball1.points = 2
+            ball1.era = era as unknown as number
+            ball1.createdAt = event.block.timestamp
+            await ball1.save()
+
+            let senderRec = await Identity.get(sender.toString())
+            if (!senderRec) {
+                senderRec = new Identity(sender.toString())
+                await senderRec.save()
+            }
+            const ball2 = new EarnedEnergyPoint(`${event.block.timestamp}-${sender.toString()}`)
+            ball2.identityId = senderRec.id
+            ball2.fedId = record.id
+            ball2.points = 1
+            ball2.era = era as unknown as number
+            ball2.createdAt = event.block.timestamp
+            await ball2.save()
+        }
     }
 }
 

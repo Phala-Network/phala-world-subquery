@@ -97,3 +97,12 @@ type SoldNft @entity {
   nftId: Int! @index
   price: BigInt! @index
 }
+
+type EarnedEnergyPoint @entity {
+  id: ID!
+  createdAt: Date!
+  points: Int!
+  era: Int! @index
+  identity: Identity
+  fed: FedOriginOfShell
+}
