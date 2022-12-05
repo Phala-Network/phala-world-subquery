@@ -69,6 +69,8 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
         record.collectionId = collectionId as unknown as number
         record.nftId = nftId as unknown as number
         record.era = era as unknown as number
+        record.senderIdentityId = sender.toString()
+        record.receiverIdentityId = nft.owner.toString()
         await record.save();
         logger.debug(`Add new FedOriginOfShell record: ${record}`)
 

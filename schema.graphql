@@ -69,6 +69,8 @@ type FedOriginOfShell @entity {
   receiver: String! @index
   era: Int @index
   shell: MintedOriginOfShellNft!
+  senderIdentity: Identity
+  receiverIdentity: Identity
 }
 
 type ListedNft @entity {
