@@ -12,6 +12,7 @@ import {
     Identity,
     EarnedEnergyPoint,
 } from "../types";
+import { v4 as uuidv4 } from 'uuid'
 
 export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<void> {
     const {event: {data: [rarityType, collectionId, nftId, owner, race, career, generationId]}} = event;
@@ -60,8 +61,7 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
     const {event: {data: [collectionId, nftId, sender, era]}} = event;
     let nft = await MintedOriginOfShellNft.get(`${collectionId}-${nftId}`)
     if (nft !== undefined) {
-        let id = `${collectionId}-${nftId}-${era}-${+(event.block.timestamp)}`
-        let record = new FedOriginOfShell(id)
+        let record = new FedOriginOfShell(uuidv4())
         record.receiver = nft.owner
         record.shellId = `${collectionId}-${nftId}`
         record.createdAt = event.block.timestamp
@@ -80,7 +80,7 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
                 receiver = new Identity(nft.owner.toString())
                 await receiver.save()
             }
-            const ball = new EarnedEnergyPoint(`${event.block.timestamp}-${sender.toString()}`)
+            const ball = new EarnedEnergyPoint(uuidv4())
             ball.identityId = receiver.id
             ball.fedId = record.id
             ball.points = 3
@@ -93,7 +93,7 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
                 receiver = new Identity(nft.owner.toString())
                 await receiver.save()
             }
-            const ball1 = new EarnedEnergyPoint(`${event.block.timestamp}-${nft.owner.toString()}`)
+            const ball1 = new EarnedEnergyPoint(uuidv4())
             ball1.identityId = receiver.id
             ball1.fedId = record.id
             ball1.points = 2
@@ -106,7 +106,7 @@ export async function handleFedOriginOfShell(event: SubstrateEvent): Promise<voi
                 senderRec = new Identity(sender.toString())
                 await senderRec.save()
             }
-            const ball2 = new EarnedEnergyPoint(`${event.block.timestamp}-${sender.toString()}`)
+            const ball2 = new EarnedEnergyPoint(uuidv4())
             ball2.identityId = senderRec.id
             ball2.fedId = record.id
             ball2.points = 1

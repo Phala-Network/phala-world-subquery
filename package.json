@@ -31,6 +31,7 @@
   "dependencies": {
     "@subql/node": "^1.9.1",
     "@subql/query": "^1.5.0",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "uuid": "^9.0.0"
   }
 }
