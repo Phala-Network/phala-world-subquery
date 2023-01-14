@@ -17,6 +17,7 @@ type MintedOriginOfShellNft @entity {
   feds: [FedOriginOfShell!]! @derivedFrom(field: "shell")
   shell: MintedShellNft
   identity: Identity
+  burned: Boolean
 }
 
 type MintedShellNft @entity {
