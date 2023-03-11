@@ -83,24 +83,6 @@ type ListedNft @entity {
   amount: BigInt
 }
 
-type UnlistedNft @entity {
-  id: ID!
-  createdAt: Date!
-  owner: String! @index
-  collectionId: Int! @index
-  nftId: Int! @index
-}
-
-type SoldNft @entity {
-  id: ID!
-  createdAt: Date!
-  sender: String! @index
-  buyer: String! @index
-  collectionId: Int! @index
-  nftId: Int! @index
-  price: BigInt! @index
-}
-
 type EarnedEnergyPoint @entity {
   id: ID!
   createdAt: Date!
@@ -108,4 +90,36 @@ type EarnedEnergyPoint @entity {
   era: Int! @index
   identity: Identity
   fed: FedOriginOfShell
+}
+
+#
+# Marketplace
+#
+
+type NftOwner @entity {
+  id: ID!
+  accountId: String @index
+  collectionId: Int @index
+  nftId: Int @index
+  parentCollectionId: Int @index
+  parentNftId: Int @index
+  createdAt: Date!
+}
+
+type Nft @entity {
+  id: ID!
+  owner: NftOwner! @index
+  collectionId: Int! @index
+  nftId: Int! @index
+  burned: Boolean!
+  createdAt: Date!
+}
+
+type NftActivity @entity {
+  id: ID!
+  collectionId: Int! @index
+  nftId: Int! @index
+  activityType: String! @index
+  price: BigInt @index
+  createdAt: Date!
 }

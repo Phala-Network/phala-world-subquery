@@ -57,24 +57,47 @@ dataSources:
           filter:
             module: pwIncubation
             method: OriginOfShellReceivedFood
-        - handler: handleNftListed
-          kind: substrate/EventHandler
-          filter:
-            module: rmrkMarket
-            method: TokenListed
-        - handler: handleUnlistedNft
-          kind: substrate/EventHandler
-          filter:
-            module: rmrkMarket
-            method: TokenUnlisted
-        - handler: handleSoldNft
-          kind: substrate/EventHandler
-          filter:
-            module: rmrkMarket
-            method: TokenSold
         - handler: handleIdentitySet
           kind: substrate/CallHandler
           filter:
             module: identity
             method: setIdentity
             success: true
+
+        # Module: rmrkMarket
+        
+        - handler: handleNftMinted
+          kind: substrate/EventHandler
+          filter:
+            module: rmrkCore
+            method: NftMinted
+
+        - handler: handleNftBurned
+          kind: substrate/EventHandler
+          filter:
+            module: rmrkCore
+            method: NFTBurned
+
+        - handler: handleListedNft
+          kind: substrate/EventHandler
+          filter:
+            module: rmrkMarket
+            method: TokenListed
+
+        - handler: handleUnlistedNft
+          kind: substrate/EventHandler
+          filter:
+            module: rmrkMarket
+            method: TokenUnlisted
+
+        - handler: handleSoldNft
+          kind: substrate/EventHandler
+          filter:
+            module: rmrkMarket
+            method: TokenSold
+
+        - handler: handleSentNft
+          kind: substrate/EventHandler
+          filter:
+            module: rmrkCore
+            method: NFTSent
