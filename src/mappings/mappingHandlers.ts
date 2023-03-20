@@ -15,6 +15,19 @@ import {
 } from "../types";
 import { v4 as uuidv4 } from 'uuid'
 
+
+async function getOrCreateOwner(accountId: string, createdAt: Date): Promise<NftOwner> {
+  let nftOwner = await NftOwner.get(accountId)
+  if (!nftOwner) {
+    nftOwner = new NftOwner(accountId)
+    nftOwner.accountId = accountId
+    nftOwner.createdAt = createdAt
+    await nftOwner.save()
+  }
+  return nftOwner
+}
+
+
 export async function handleMintedOriginOfShell(event: SubstrateEvent): Promise<void> {
   const {event: {data: [rarityType, collectionId, nftId, owner, race, career, generationId]}} = event;
   //Retrieve the record by its ID
@@ -277,16 +290,9 @@ export async function handleSentNft(event: SubstrateEvent): Promise<void> {
   const {event: {data: [sender, recipient, collectionId, nftId]}} = event;
   const id = `${collectionId}-${nftId}`
 
-  let nftOwner: NftOwner
   let ownerData = recipient.toJSON() as Record<string, unknown>
   const accountId = ownerData.accountId as string
-  nftOwner = await NftOwner.get(accountId)
-  if (!nftOwner) {
-    nftOwner = new NftOwner(accountId)
-    nftOwner.accountId = accountId
-    nftOwner.createdAt = event.block.timestamp
-    await nftOwner.save()
-  }
+  let nftOwner = await getOrCreateOwner(accountId, event.block.timestamp)
 
   let nft = await Nft.get(id)
   if (nft) {
@@ -297,6 +303,8 @@ export async function handleSentNft(event: SubstrateEvent): Promise<void> {
     activity.collectionId = collectionId as unknown as number
     activity.nftId = nftId as unknown as number
     activity.createdAt = event.block.timestamp
+    activity.fromUserId = (await getOrCreateOwner(sender.toString(), event.block.timestamp)).id
+    activity.toUserId = (await getOrCreateOwner(accountId, event.block.timestamp)).id
     activity.activityType = 'sent'
     await activity.save()
   }
@@ -330,12 +338,14 @@ export async function handleListedNft(event: SubstrateEvent): Promise<void> {
     activity.collectionId = collectionId as unknown as number
     activity.nftId = nftId as unknown as number
     activity.createdAt = event.block.timestamp
+    activity.fromUserId = (await getOrCreateOwner(owner.toString(), event.block.timestamp)).id
     activity.activityType = 'listed'
     activity.price = BigInt(amount.toString())
     await activity.save()
   }
+  logger.debug(`activity target: ${id} ${nft}`)
 
-  logger.debug(`Add new NftListed record: ${record}`)
+  logger.debug(`Handle listed event: ${collectionId} - ${nftId}`)
 }
 
 export async function handleUnlistedNft(event: SubstrateEvent): Promise<void> {
@@ -349,10 +359,14 @@ export async function handleUnlistedNft(event: SubstrateEvent): Promise<void> {
     const activity = new NftActivity(uuidv4())
     activity.collectionId = collectionId as unknown as number
     activity.nftId = nftId as unknown as number
+    activity.fromUserId = (await getOrCreateOwner(owner.toString(), event.block.timestamp)).id
     activity.createdAt = event.block.timestamp
     activity.activityType = 'unlisted'
     await activity.save()
   }
+  logger.debug(`activity target: ${id} ${nft}`)
+
+  logger.debug(`Handle unlisted event: ${collectionId} - ${nftId}`)
 }
 
 export async function handleSoldNft(event: SubstrateEvent): Promise<void> {
@@ -366,6 +380,8 @@ export async function handleSoldNft(event: SubstrateEvent): Promise<void> {
     activity.collectionId = collectionId as unknown as number
     activity.nftId = nftId as unknown as number
     activity.createdAt = event.block.timestamp
+    activity.fromUserId = (await getOrCreateOwner(sender.toString(), event.block.timestamp)).id
+    activity.toUserId = (await getOrCreateOwner(buyer.toString(), event.block.timestamp)).id
     activity.activityType = 'sold'
     activity.price = BigInt(price.toString())
     await activity.save()

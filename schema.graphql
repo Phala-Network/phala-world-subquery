@@ -119,6 +119,8 @@ type NftActivity @entity {
   id: ID!
   collectionId: Int! @index
   nftId: Int! @index
+  fromUser: NftOwner @index
+  toUser: NftOwner @index
   activityType: String! @index
   price: BigInt @index
   createdAt: Date!
