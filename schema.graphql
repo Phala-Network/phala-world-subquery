@@ -112,6 +112,7 @@ type Nft @entity {
   collectionId: Int! @index
   nftId: Int! @index
   burned: Boolean!
+  metadata: String
   createdAt: Date!
 }
 
@@ -123,5 +124,12 @@ type NftActivity @entity {
   toUser: NftOwner @index
   activityType: String! @index
   price: BigInt @index
+  createdAt: Date!
+}
+
+type Collection @entity {
+  id: ID!
+  collectionId: Int! @index
+  metadata: String
   createdAt: Date!
 }
